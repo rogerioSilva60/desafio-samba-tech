@@ -31,7 +31,7 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 		NovaMedia novaMedia = NovaMedia.builder()
 				.nome(media.getNome())
 				.inputStream(inputStream).build();
-		mediaStorageService.salvar(novaMedia);
+		mediaStorageService.armazenar(novaMedia);
 		
 		return mediaSalva;
 	}

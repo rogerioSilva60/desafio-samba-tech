@@ -1,5 +1,6 @@
 package br.com.desafio.sambatech.domain.util.exception;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,10 @@ public class ApiErrors {
     }
 	
 	public ApiErrors(NaoEncontradoException ex) {
+		this.errors = Arrays.asList(ex.getMessage());
+	}
+
+	public ApiErrors(StorageException ex) {
 		this.errors = Arrays.asList(ex.getMessage());
 	}
 

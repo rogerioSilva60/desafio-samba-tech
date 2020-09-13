@@ -1,5 +1,7 @@
 package br.com.desafio.sambatech.domain.util.exception.controllerAdvice;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import br.com.desafio.sambatech.domain.util.exception.ApiErrors;
 import br.com.desafio.sambatech.domain.util.exception.NaoEncontradoException;
+import br.com.desafio.sambatech.domain.util.exception.StorageException;
 import br.com.desafio.sambatech.domain.util.response.Response;
 
 
@@ -24,6 +27,11 @@ public class ControllerAdviceException {
 	@ExceptionHandler(NaoEncontradoException.class)
 	public ResponseEntity<?> handleNaoEncontradoException(NaoEncontradoException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(prepararRespostaException(new ApiErrors(ex)));
+	}
+	
+	@ExceptionHandler(StorageException.class)
+	public ResponseEntity<?> handleStorageException(StorageException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(prepararRespostaException(new ApiErrors(ex)));
 	}
 	
 	private Response<?> prepararRespostaException(ApiErrors apiErrors) {

@@ -12,7 +12,19 @@ import lombok.Getter;
 
 public interface MediaStorageService {
 
-	void salvar(NovaMedia novaMedia);
+	void armazenar(NovaMedia novaMedia);
+	
+	void deletar(String nomeArquivo);
+	
+	InputStream recuperar(String nomeArquivo);
+	
+	default void substituir(String nomeArquivoAntigo, NovaMedia novaMedia) {
+		this.armazenar(novaMedia);
+		
+		if(nomeArquivoAntigo != null) {
+			this.deletar(nomeArquivoAntigo);
+		}
+	} 
 	
 	@Builder
 	@Getter
