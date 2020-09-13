@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
+import br.com.desafio.sambatech.domain.util.response.Response;
 
 
 @RestController
@@ -33,39 +35,48 @@ public class MediaController {
 
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping
-	public Media salvar(MultipartFile multipartFile) throws IllegalStateException, IOException {
-
+	public ResponseEntity<Response<Media>> salvar(MultipartFile multipartFile) throws IllegalStateException, IOException {
+		Response<Media> response = new Response<>();
 //		Path path = Path.of("src/main/resources/catalogos", multipartFile.getOriginalFilename());
 //		multipartFile.transferTo(path);
 		Media media = Media.builder().nome(multipartFile.getOriginalFilename())
 				.build();
 		Media mediaSalva = cadastroMediaService.salvarOuAlterar(media);
-		return mediaSalva;
+		response.setData(mediaSalva);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	@GetMapping
-	public List<Media> listar(@RequestParam(required = false) Boolean ehTodas) {
+	public ResponseEntity<Response<List<Media>>> listar(@RequestParam(required = false) Boolean ehTodas) {
 		ehTodas = ehTodas == null ? true : ehTodas;
+		Response<List<Media>> response = new Response<>();
 		List<Media> medias = cadastroMediaService.listar(ehTodas);
-		return medias;
+		response.setData(medias);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("{id}")
-	public Media buscar(@PathVariable Long id) {
+	public ResponseEntity<Response<Media>> buscar(@PathVariable Long id) {
+		Response<Media> response = new Response<>();
 		Media media = cadastroMediaService.buscar(id);
-		return media;
+		response.setData(media);
+		return ResponseEntity.ok(response);
 	}
 	
 	@PatchMapping("{id}")
-	public Media atualizarDeletado(@PathVariable Long id) {
+	public ResponseEntity<Response<Media>> atualizarDeletado(@PathVariable Long id) {
+		Response<Media> response = new Response<>();
 		Media media = cadastroMediaService.atualizarDeletado(id);
-		return media;
+		response.setData(media);
+		return ResponseEntity.ok(response);
 	}
 	
 	@PutMapping("{id}")
-	public Media atualizar(@PathVariable Long id, @RequestBody Media media) {
+	public ResponseEntity<Response<Media>> atualizar(@PathVariable Long id, @RequestBody Media media) {
+		Response<Media> response = new Response<>();
 		Media mediaAtualizada = cadastroMediaService.atualizar(media, id);
-		return mediaAtualizada;
+		response.setData(mediaAtualizada);
+		return ResponseEntity.ok(response);
 	}
 	
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)

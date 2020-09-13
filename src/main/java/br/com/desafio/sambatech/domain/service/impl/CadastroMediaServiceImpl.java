@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.repository.MediaRepository;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
+import br.com.desafio.sambatech.domain.util.exception.NaoEncontradoException;
 
 @Service
 public class CadastroMediaServiceImpl implements CadastroMediaService {
@@ -31,7 +32,7 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 	@Override
 	public Media buscar(Long id) {
 		Media media = repository.findById(id)
-			.orElseThrow(() -> new RuntimeException("Media não encontrada"));
+			.orElseThrow(() -> new NaoEncontradoException("Media não encontrada"));
 		return media;
 	}
 	
