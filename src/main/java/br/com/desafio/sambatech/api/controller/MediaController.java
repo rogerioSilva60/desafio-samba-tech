@@ -3,7 +3,10 @@ package br.com.desafio.sambatech.api.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.desafio.sambatech.api.dto.MediaDto;
 import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
 import br.com.desafio.sambatech.domain.util.response.Response;
@@ -33,17 +37,13 @@ public class MediaController {
 	}
 
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PostMapping
-	public ResponseEntity<Response<Media>> salvar(MultipartFile multipartFile) {
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Response<Media>> salvar(@Valid MediaDto dto) throws IOException {
 		Response<Media> response = new Response<>();
-		try {
-			Media media = Media.builder().nome(multipartFile.getOriginalFilename()).build();
-			Media mediaSalva = cadastroMediaService.salvar(media, multipartFile.getInputStream());
-			response.setData(mediaSalva);
-			return ResponseEntity.status(HttpStatus.CREATED).body(response);
-		} catch (IOException e) {
-			return ResponseEntity.badRequest().body(response);
-		}
+		Media media = Media.builder().nome(dto.getArquivo().getOriginalFilename()).build();
+		Media mediaSalva = cadastroMediaService.salvar(media, dto.getArquivo().getInputStream());
+		response.setData(mediaSalva);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
 	}
 
