@@ -1,5 +1,6 @@
 package br.com.desafio.sambatech.domain.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,20 +8,32 @@ import org.springframework.stereotype.Service;
 import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.repository.MediaRepository;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
+import br.com.desafio.sambatech.domain.service.MediaStorageService;
+import br.com.desafio.sambatech.domain.service.MediaStorageService.NovaMedia;
 import br.com.desafio.sambatech.domain.util.exception.NaoEncontradoException;
 
 @Service
 public class CadastroMediaServiceImpl implements CadastroMediaService {
 
 	private MediaRepository repository;
+	private MediaStorageService mediaStorageService;
 
-	public CadastroMediaServiceImpl(MediaRepository repository) {
+	public CadastroMediaServiceImpl(MediaRepository repository, MediaStorageService mediaStorageService) {
 		this.repository = repository;
+		this.mediaStorageService = mediaStorageService;
 	}
 
 	@Override
-	public Media salvarOuAlterar(Media media) {
-		return repository.save(media);
+	public Media salvar(Media media, InputStream inputStream) {
+		Media mediaSalva = repository.save(media);
+		repository.flush();
+		
+		NovaMedia novaMedia = NovaMedia.builder()
+				.nome(media.getNome())
+				.inputStream(inputStream).build();
+		mediaStorageService.salvar(novaMedia);
+		
+		return mediaSalva;
 	}
 
 	@Override
@@ -40,7 +53,7 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 	public Media atualizarDeletado(Long id) {
 		Media media = buscar(id);
 		media.setDeletado(!media.isDeletado());
-		Media mediaAtualizada = salvarOuAlterar(media);
+		Media mediaAtualizada = repository.save(media);
 		return mediaAtualizada;
 	}
 
@@ -48,7 +61,7 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 	public Media atualizar(Media media, Long id) {
 		buscar(id);
 		media.setId(id);
-		Media mediaAtualizada = salvarOuAlterar(media);
+		Media mediaAtualizada = repository.save(media);
 		return mediaAtualizada;
 	}
 

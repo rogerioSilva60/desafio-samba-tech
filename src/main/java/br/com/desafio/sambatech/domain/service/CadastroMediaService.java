@@ -1,12 +1,13 @@
 package br.com.desafio.sambatech.domain.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import br.com.desafio.sambatech.domain.entity.Media;
 
 public interface CadastroMediaService {
 
-	Media salvarOuAlterar(Media media);
+	Media salvar(Media media, InputStream inputStream);
 
 	List<Media> listar(boolean deletadas);
 	

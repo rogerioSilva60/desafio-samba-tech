@@ -22,30 +22,31 @@ import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
 import br.com.desafio.sambatech.domain.util.response.Response;
 
-
 @RestController
 @RequestMapping("api/v1/medias")
 public class MediaController {
 
 	private CadastroMediaService cadastroMediaService;
-	
+
 	public MediaController(CadastroMediaService cadastroMediaService) {
 		this.cadastroMediaService = cadastroMediaService;
 	}
 
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping
-	public ResponseEntity<Response<Media>> salvar(MultipartFile multipartFile) throws IllegalStateException, IOException {
+	public ResponseEntity<Response<Media>> salvar(MultipartFile multipartFile) {
 		Response<Media> response = new Response<>();
-//		Path path = Path.of("src/main/resources/catalogos", multipartFile.getOriginalFilename());
-//		multipartFile.transferTo(path);
-		Media media = Media.builder().nome(multipartFile.getOriginalFilename())
-				.build();
-		Media mediaSalva = cadastroMediaService.salvarOuAlterar(media);
-		response.setData(mediaSalva);
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		try {
+			Media media = Media.builder().nome(multipartFile.getOriginalFilename()).build();
+			Media mediaSalva = cadastroMediaService.salvar(media, multipartFile.getInputStream());
+			response.setData(mediaSalva);
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		} catch (IOException e) {
+			return ResponseEntity.badRequest().body(response);
+		}
+
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<Response<List<Media>>> listar(@RequestParam(required = false) Boolean ehTodas) {
 		ehTodas = ehTodas == null ? true : ehTodas;
@@ -62,15 +63,15 @@ public class MediaController {
 		response.setData(media);
 		return ResponseEntity.ok(response);
 	}
-	
-	@PatchMapping("{id}")
+
+	@PatchMapping("deletado/{id}")
 	public ResponseEntity<Response<Media>> atualizarDeletado(@PathVariable Long id) {
 		Response<Media> response = new Response<>();
 		Media media = cadastroMediaService.atualizarDeletado(id);
 		response.setData(media);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@PutMapping("{id}")
 	public ResponseEntity<Response<Media>> atualizar(@PathVariable Long id, @RequestBody Media media) {
 		Response<Media> response = new Response<>();
@@ -78,7 +79,7 @@ public class MediaController {
 		response.setData(mediaAtualizada);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@DeleteMapping("{id}")
 	public void deletar(@PathVariable Long id) {
