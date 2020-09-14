@@ -31,6 +31,7 @@ public interface MediaStorageService {
 	class NovaMedia {
 		private String nome;
 		private InputStream inputStream;
+		private String contentType;
 		
 		public void transferirPara(Path path) throws IOException {
 			FileCopyUtils.copy(this.inputStream, Files.newOutputStream(path));
