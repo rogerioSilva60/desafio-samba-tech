@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 public class ApiErrors {
 
@@ -25,6 +27,10 @@ public class ApiErrors {
 	}
 
 	public ApiErrors(IOException ex) {
+		this.errors = Arrays.asList(ex.getMessage());
+	}
+
+	public ApiErrors(MaxUploadSizeExceededException ex) {
 		this.errors = Arrays.asList(ex.getMessage());
 	}
 

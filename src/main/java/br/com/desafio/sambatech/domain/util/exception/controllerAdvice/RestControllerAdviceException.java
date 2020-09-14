@@ -2,6 +2,7 @@ package br.com.desafio.sambatech.domain.util.exception.controllerAdvice;
 
 import java.io.IOException;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -9,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import br.com.desafio.sambatech.domain.util.exception.ApiErrors;
 import br.com.desafio.sambatech.domain.util.exception.NaoEncontradoException;
@@ -43,6 +45,11 @@ public class RestControllerAdviceException {
 	
 	@ExceptionHandler(IOException.class)
 	public ResponseEntity<?> handleIOException(IOException ex) {
+		return ResponseEntity.badRequest().body(prepararRespostaException(new ApiErrors(ex)));
+	}
+	
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<?> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
 		return ResponseEntity.badRequest().body(prepararRespostaException(new ApiErrors(ex)));
 	}
 	

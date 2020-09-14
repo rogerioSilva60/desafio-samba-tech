@@ -1,7 +1,6 @@
 package br.com.desafio.sambatech.domain.config;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
