@@ -6,13 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import br.com.desafio.sambatech.core.storage.StorageProperties;
 import br.com.desafio.sambatech.domain.service.MediaStorageService;
 import br.com.desafio.sambatech.domain.util.exception.StorageException;
 
-@Service
 public class LocalMediaStorageService implements MediaStorageService {
 
 	@Autowired

@@ -16,6 +16,11 @@ public class StorageProperties {
 
 	private Local local = new Local();
 	private S3 s3 = new S3();
+	private TypeStorage typeStorage = TypeStorage.LOCAL;
+	
+	public enum TypeStorage {
+		LOCAL, S3;
+	}
 	
 	@Getter
 	@Setter
