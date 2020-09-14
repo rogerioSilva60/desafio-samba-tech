@@ -1,6 +1,7 @@
 package br.com.desafio.sambatech.infrastructure;
 
 import java.io.InputStream;
+import java.net.URL;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,9 +60,18 @@ public class S3MediaStorageService implements MediaStorageService {
 	}
 
 	@Override
-	public InputStream recuperar(String nomeArquivo) {
-		// TODO Auto-generated method stub
-		return null;
+	public MediaRecuperada recuperar(String nomeArquivo) {
+		try {
+			String caminhoArquivo = prepararArquivo(nomeArquivo);
+			
+			URL url = amanzonS3.getUrl(storageProperties.getS3().getBucket(), caminhoArquivo);
+			
+			MediaRecuperada mediaRecuperada = MediaRecuperada.builder().url(url.toString()).build();
+			
+			return mediaRecuperada;
+		} catch (Exception e) {
+			throw new StorageException("Não foi possivel recuperar o caminho do arquivo na Amazon S3.", e);
+		}
 	}
 	
 	private String prepararArquivo(String nomeArquivo) {

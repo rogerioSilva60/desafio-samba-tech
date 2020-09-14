@@ -16,7 +16,7 @@ public interface MediaStorageService {
 	
 	void deletar(String nomeArquivo);
 	
-	InputStream recuperar(String nomeArquivo);
+	MediaRecuperada recuperar(String nomeArquivo);
 	
 	default void substituir(String nomeArquivoAntigo, NovaMedia novaMedia) {
 		this.armazenar(novaMedia);
@@ -35,6 +35,21 @@ public interface MediaStorageService {
 		
 		public void transferirPara(Path path) throws IOException {
 			FileCopyUtils.copy(this.inputStream, Files.newOutputStream(path));
+		}
+	}
+	
+	@Builder
+	@Getter
+	class MediaRecuperada {
+		private InputStream inputStream;
+		private String url;
+		
+		public boolean temUrl() {
+			return this.url != null;
+		}
+		
+		public boolean temInputStream() {
+			return this.inputStream != null;
 		}
 	}
 }

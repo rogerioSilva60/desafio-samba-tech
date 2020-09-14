@@ -37,10 +37,10 @@ public class LocalMediaStorageService implements MediaStorageService {
 	}
 
 	@Override
-	public InputStream recuperar(String nomeArquivo) {
+	public MediaRecuperada recuperar(String nomeArquivo) {
 		try {
 			Path path = prepararPath(nomeArquivo);
-	        return Files.newInputStream(path);
+	        return MediaRecuperada.builder().inputStream(Files.newInputStream(path)).build();
 	    } catch (Exception e) {
 	        throw new StorageException("Não foi possível recuperar arquivo.", e);
 	    }
