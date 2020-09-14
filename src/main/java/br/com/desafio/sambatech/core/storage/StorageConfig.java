@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
@@ -21,7 +23,13 @@ public class StorageConfig {
 	@Bean
 	public AmazonS3 amazonS3() {
 		try {
-			return AmazonS3ClientBuilder.standard().build();
+			BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(properties.getS3().getIdChaveAcesso(), 
+					properties.getS3().getChaveAcessoSecreta());
+			
+			return AmazonS3ClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+					.withRegion(properties.getS3().getRegiao())
+					.build();
 		} catch (Exception e) {
 			
 		}
