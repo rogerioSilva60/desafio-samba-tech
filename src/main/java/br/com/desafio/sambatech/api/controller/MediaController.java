@@ -39,7 +39,12 @@ public class MediaController {
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Response<Media>> salvar(@Valid MediaDto dto) throws IOException {
 		Response<Media> response = new Response<>();
-		Media media = Media.builder().nome(dto.getArquivo().getOriginalFilename()).contentType(dto.getArquivo().getContentType()).build();
+		Media media = Media.builder()
+				.nome(dto.getArquivo().getOriginalFilename())
+				.contentType(dto.getArquivo().getContentType())
+				.duracao(dto.getDuracao())
+				.descricao(dto.getDescricao())
+				.build();
 		Media mediaSalva = cadastroMediaService.salvar(media, dto.getArquivo().getInputStream());
 		response.setData(mediaSalva);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);

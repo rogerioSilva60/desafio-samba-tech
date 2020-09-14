@@ -32,6 +32,8 @@ public class Media implements Serializable {
 	@Column(nullable = false)
 	private String nome;
 	
+	private String descricao;
+	
 	@Column(nullable = false)
 	private String contentType;
 
