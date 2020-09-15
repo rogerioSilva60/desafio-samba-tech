@@ -81,8 +81,11 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 
 	@Override
 	public void deletar(Long id) {
-		buscar(id);
+		Media mediaDoBanco = buscar(id);
 		repository.deleteById(id);
+		repository.flush();
+		
+		mediaStorageService.deletar(mediaDoBanco.getNome());
 	}
 	
 }
