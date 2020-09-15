@@ -19,4 +19,8 @@ Por fim, basta acessar a url: http://localhost:8080/swagger-ui.html#/ na máquin
 
 ![documentacao-sambatech](https://user-images.githubusercontent.com/23174611/93091012-f0cf2280-f673-11ea-84fa-ae93fbcc08b3.png)
 
+### Comandos para rodar no Docker
+1. Gerar Imagem da aplicacao: docker build -t desafio-samba-tech-app .
+2. Executar imagem: docker run -p 8080:8080 desafio-samba-tech-app
 
+Obs: Esses comandos devem ser executados pelo terminal no S.O na raiz do projeto para que ele execute com sucesso
