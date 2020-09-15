@@ -1,6 +1,5 @@
 package br.com.desafio.sambatech.infrastructure;
 
-import java.io.InputStream;
 import java.net.URL;
 
 import org.springframework.beans.factory.annotation.Autowired;

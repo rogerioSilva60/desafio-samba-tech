@@ -2,7 +2,6 @@ package br.com.desafio.sambatech.domain.util.exception.controllerAdvice;
 
 import java.io.IOException;
 
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;

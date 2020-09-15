@@ -1,7 +1,6 @@
 package br.com.desafio.sambatech.infrastructure;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
