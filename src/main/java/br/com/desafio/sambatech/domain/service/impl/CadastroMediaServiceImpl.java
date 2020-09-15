@@ -66,7 +66,7 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 		Media mediaDoBanco = buscar(id);
 		String nomeArquivoAnterior = mediaDoBanco.getNome();
 		media.setId(mediaDoBanco.getId());
-		media.setDataUploud(mediaDoBanco.getDataUploud());
+		media.setDataUpload(mediaDoBanco.getDataUpload());
 		media.setDeletado(mediaDoBanco.isDeletado());
 		
 		Media mediaAtualizada = repository.save(media);

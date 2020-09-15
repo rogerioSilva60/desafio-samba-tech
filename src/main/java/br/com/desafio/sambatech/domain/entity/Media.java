@@ -43,7 +43,7 @@ public class Media implements Serializable {
 	
 	@CreationTimestamp
 	@Column(nullable = false)
-	private LocalDate dataUploud;
+	private LocalDate dataUpload;
 	
 	@Column(nullable = false)
 	private boolean deletado;

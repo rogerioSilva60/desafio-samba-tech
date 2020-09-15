@@ -37,7 +37,7 @@ import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
 
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
+@ActiveProfiles("testH2")
 @WebMvcTest(MediaController.class)
 @AutoConfigureMockMvc
 public class MediaControllerTest {
