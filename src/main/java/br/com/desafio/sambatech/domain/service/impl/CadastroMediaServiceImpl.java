@@ -9,6 +9,7 @@ import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.repository.MediaRepository;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
 import br.com.desafio.sambatech.domain.service.MediaStorageService;
+import br.com.desafio.sambatech.domain.service.MediaStorageService.MediaRecuperada;
 import br.com.desafio.sambatech.domain.service.MediaStorageService.NovaMedia;
 import br.com.desafio.sambatech.domain.util.exception.NaoEncontradoException;
 
@@ -34,6 +35,7 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 				.contentType(media.getContentType())
 				.build();
 		mediaStorageService.armazenar(novaMedia);
+		adicionarUrlDoStorage(mediaSalva, novaMedia);
 		
 		return mediaSalva;
 	}
@@ -62,12 +64,12 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 	@Override
 	public Media atualizar(Media media, Long id, InputStream inputStream) {
 		Media mediaDoBanco = buscar(id);
-		mediaDoBanco.setDescricao(media.getDescricao());
-		mediaDoBanco.setNome(media.getNome());
-		mediaDoBanco.setContentType(media.getContentType());
-		mediaDoBanco.setDuracao(media.getDuracao());
+		String nomeArquivoAnterior = mediaDoBanco.getNome();
+		media.setId(mediaDoBanco.getId());
+		media.setDataUploud(mediaDoBanco.getDataUploud());
+		media.setDeletado(mediaDoBanco.isDeletado());
 		
-		Media mediaAtualizada = repository.save(mediaDoBanco);
+		Media mediaAtualizada = repository.save(media);
 		repository.flush();
 		
 		NovaMedia novaMedia = NovaMedia.builder()
@@ -75,7 +77,9 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 				.inputStream(inputStream)
 				.contentType(media.getContentType())
 				.build();
-		mediaStorageService.substituir(mediaDoBanco.getNome(), novaMedia);
+		mediaStorageService.substituir(nomeArquivoAnterior, novaMedia);
+		
+		adicionarUrlDoStorage(mediaAtualizada, novaMedia);
 		return mediaAtualizada;
 	}
 
@@ -88,4 +92,10 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 		mediaStorageService.deletar(mediaDoBanco.getNome());
 	}
 	
+	private void adicionarUrlDoStorage(Media mediaSalva, NovaMedia novaMedia) {
+		MediaRecuperada recuperar = mediaStorageService.recuperar(novaMedia.getNome());
+		mediaSalva.setUrl(recuperar.getUrl());
+		repository.save(mediaSalva);
+		repository.flush();
+	}
 }
