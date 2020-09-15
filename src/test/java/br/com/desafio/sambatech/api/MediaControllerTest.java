@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,6 +95,65 @@ public class MediaControllerTest {
            .andExpect(jsonPath("data.nome").value(mediaFake.getNome()))
            .andExpect(jsonPath("data.descricao").value(mediaFake.getDescricao()))
            .andExpect(jsonPath("data.duracao").value(mediaFake.getDuracao()));
+        
+	}
+	
+	@Test
+	@DisplayName("Deve atualizar media com sucesso")
+	public void atualizarMediaTest() throws Exception {
+		//cenario
+		Media mediaAtualizadaFake = Media.builder()
+				.id(1l)
+				.contentType("video/mp4")
+				.nome("musica.mp4")
+				.descricao("Media para testes")
+				.duracao(54545226l)
+				.build();
+		
+		//Simulando a resposta ao criar o usuario.
+        BDDMockito.given(cadastroService.atualizar(Mockito.any(Media.class), Mockito.anyLong(), Mockito.any(InputStream.class)))
+                .willReturn(mediaAtualizadaFake);
+        
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("descricao", mediaAtualizadaFake.getDescricao());
+        parameters.add("duracao", mediaAtualizadaFake.getDuracao().toString());
+        
+        MockMultipartFile file = new MockMultipartFile(
+          "arquivo", 
+          mediaAtualizadaFake.getNome(), 
+          mediaAtualizadaFake.getContentType(), 
+          mediaAtualizadaFake.getDescricao()
+          .getBytes()
+        );
+        
+        //Execucao
+        //Simulando o envio pro controller.
+        MockMultipartHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.multipart(USER_API.concat("/") + mediaAtualizadaFake.getId());
+        builder.with(new RequestPostProcessor() {
+            @Override
+            public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                request.setMethod("PUT");
+                return request;
+            }
+        });
+        
+        MockMultipartHttpServletRequestBuilder builderRequest = builder.file(file);
+        
+        
+        MockHttpServletRequestBuilder multipartRequest = builderRequest
+        .params(parameters)
+        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+        .accept(MediaType.APPLICATION_JSON);
+        
+        //Verificacao
+        mvc
+           .perform(multipartRequest)
+           .andExpect(status().isOk())
+           .andExpect(jsonPath("data.id").isNotEmpty())
+           .andExpect(jsonPath("data.nome").value(mediaAtualizadaFake.getNome()))
+           .andExpect(jsonPath("data.descricao").value(mediaAtualizadaFake.getDescricao()))
+           .andExpect(jsonPath("data.duracao").value(mediaAtualizadaFake.getDuracao()));
         
 	}
 }
