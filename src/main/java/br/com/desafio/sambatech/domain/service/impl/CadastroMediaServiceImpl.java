@@ -60,10 +60,22 @@ public class CadastroMediaServiceImpl implements CadastroMediaService {
 	}
 
 	@Override
-	public Media atualizar(Media media, Long id) {
-		buscar(id);
-		media.setId(id);
-		Media mediaAtualizada = repository.save(media);
+	public Media atualizar(Media media, Long id, InputStream inputStream) {
+		Media mediaDoBanco = buscar(id);
+		mediaDoBanco.setDescricao(media.getDescricao());
+		mediaDoBanco.setNome(media.getNome());
+		mediaDoBanco.setContentType(media.getContentType());
+		mediaDoBanco.setDuracao(media.getDuracao());
+		
+		Media mediaAtualizada = repository.save(mediaDoBanco);
+		repository.flush();
+		
+		NovaMedia novaMedia = NovaMedia.builder()
+				.nome(media.getNome())
+				.inputStream(inputStream)
+				.contentType(media.getContentType())
+				.build();
+		mediaStorageService.substituir(mediaDoBanco.getNome(), novaMedia);
 		return mediaAtualizada;
 	}
 

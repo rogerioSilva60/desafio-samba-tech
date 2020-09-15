@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.com.desafio.sambatech.api.dto.MediaDto;
+import br.com.desafio.sambatech.core.storage.validation.FileContentType;
 import br.com.desafio.sambatech.domain.entity.Media;
 import br.com.desafio.sambatech.domain.service.CadastroMediaService;
 import br.com.desafio.sambatech.domain.util.response.Response;
@@ -36,19 +39,22 @@ public class MediaController {
 	}
 
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Response<Media>> salvar(@Valid MediaDto dto) throws IOException {
+	@PostMapping
+	public ResponseEntity<Response<Media>> salvar(MediaDto dto,
+			@Valid
+			@NotNull(message = "Arquivo obrigatório")
+			@FileContentType(allowed = { "video/mp4"})
+			MultipartFile arquivo) throws IOException {
 		Response<Media> response = new Response<>();
 		Media media = Media.builder()
-				.nome(dto.getArquivo().getOriginalFilename())
-				.contentType(dto.getArquivo().getContentType())
+				.nome(arquivo.getOriginalFilename())
+				.contentType(arquivo.getContentType())
 				.duracao(dto.getDuracao())
 				.descricao(dto.getDescricao())
 				.build();
-		Media mediaSalva = cadastroMediaService.salvar(media, dto.getArquivo().getInputStream());
+		Media mediaSalva = cadastroMediaService.salvar(media, arquivo.getInputStream());
 		response.setData(mediaSalva);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
 	}
 
 	@GetMapping
@@ -76,10 +82,20 @@ public class MediaController {
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("{id}")
-	public ResponseEntity<Response<Media>> atualizar(@PathVariable Long id, @RequestBody Media media) {
+	@PutMapping(value = "{id}")
+	public ResponseEntity<Response<Media>> atualizar(@PathVariable Long id, MediaDto dto,
+			@Valid
+			@NotNull(message = "Arquivo obrigatório")
+			@FileContentType(allowed = { "video/mp4"})
+			MultipartFile arquivo) throws IOException {
 		Response<Media> response = new Response<>();
-		Media mediaAtualizada = cadastroMediaService.atualizar(media, id);
+		Media media = Media.builder()
+				.nome(arquivo.getOriginalFilename())
+				.contentType(arquivo.getContentType())
+				.duracao(dto.getDuracao())
+				.descricao(dto.getDescricao())
+				.build();
+		Media mediaAtualizada = cadastroMediaService.atualizar(media, id, arquivo.getInputStream());
 		response.setData(mediaAtualizada);
 		return ResponseEntity.ok(response);
 	}

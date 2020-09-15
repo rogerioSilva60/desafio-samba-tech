@@ -15,7 +15,7 @@ public interface CadastroMediaService {
 
 	Media atualizarDeletado(Long id);
 
-	Media atualizar(Media media, Long id);
+	Media atualizar(Media media, Long id, InputStream inputStream);
 
 	void deletar(Long id);
 

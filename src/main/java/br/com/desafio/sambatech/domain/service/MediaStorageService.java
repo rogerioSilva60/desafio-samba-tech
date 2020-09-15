@@ -19,11 +19,11 @@ public interface MediaStorageService {
 	MediaRecuperada recuperar(String nomeArquivo);
 	
 	default void substituir(String nomeArquivoAntigo, NovaMedia novaMedia) {
-		this.armazenar(novaMedia);
-		
 		if(nomeArquivoAntigo != null) {
 			this.deletar(nomeArquivoAntigo);
 		}
+		
+		this.armazenar(novaMedia);
 	} 
 	
 	@Builder
